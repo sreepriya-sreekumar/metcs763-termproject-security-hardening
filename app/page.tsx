@@ -8,6 +8,7 @@ import { checkPostTableExists } from "@/lib/db-utils";
 export default async function Home() {
   // Check if the post table exists
   const tableExists = await checkPostTableExists();
+  console.log("tableExists:", tableExists);
 
   // If the post table doesn't exist, redirect to setup page
   if (!tableExists) {
