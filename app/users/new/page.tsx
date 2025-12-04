@@ -4,8 +4,7 @@ import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Form from "next/form";
 
-export default function NewUser() {
-  async function createUser(formData: FormData) {
+async function createUser(formData: FormData) {
     "use server";
 
     const name = formData.get("name") as string;
@@ -16,8 +15,9 @@ export default function NewUser() {
     });
 
     redirect("/");
-  }
+}
 
+export default function NewUser() {
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md mt-12">
       <h1 className="text-3xl font-bold mb-6">Create New User</h1>
@@ -34,7 +34,7 @@ export default function NewUser() {
         </div>
         <div>
           <label htmlFor="email" className="flex text-lg font-medium mb-2 items-center">
-            Email 
+            Email {' '}
             <span className="ml-2 px-2 py-1 text-xs font-semibold text-white bg-gray-500 rounded-lg">
               Required
             </span>

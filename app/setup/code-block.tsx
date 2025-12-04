@@ -7,7 +7,7 @@ interface CodeBlockProps {
   code: string;
 }
 
-export function CodeBlock({ code }: CodeBlockProps) {
+export function CodeBlock({ code }: Readonly<CodeBlockProps>) {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = async () => {

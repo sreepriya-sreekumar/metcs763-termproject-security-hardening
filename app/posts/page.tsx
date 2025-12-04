@@ -19,7 +19,7 @@ export const dynamic = "force-dynamic";
 
 function PostsList() {
   const searchParams = useSearchParams();
-  const page = parseInt(searchParams.get("page") || "1");
+  const page = Number.parseInt(searchParams.get("page") || "1");
 
   const [posts, setPosts] = useState<Post[]>([]);
   const [totalPages, setTotalPages] = useState(1);

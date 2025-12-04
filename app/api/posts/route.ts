@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const page = parseInt(url.searchParams.get("page") || "1");
+  const page = Number.parseInt(url.searchParams.get("page") || "1");
   const postsPerPage = 5;
   const offset = (page - 1) * postsPerPage;
 
