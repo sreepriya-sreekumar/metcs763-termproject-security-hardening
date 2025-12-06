@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 
-export default function Error({ error, reset }: { error: Error; reset: () => void }) {
+export default function AppError({ error, reset }: Readonly<{ error: Error; reset: () => void }>) {
   const shown = useRef(false);
 
   useEffect(() => {

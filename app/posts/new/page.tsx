@@ -10,7 +10,7 @@ export default function NewPost() {
       <Form action={createPost} className="space-y-6">
         <div>
           <label htmlFor="title" className="flex text-lg font-medium mb-2 items-center">
-            Title 
+            Title {' '}
             <span className="ml-2 px-2 py-1 text-xs font-semibold text-white bg-gray-500 rounded-lg">
               Required
             </span>

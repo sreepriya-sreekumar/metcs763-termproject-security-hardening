@@ -1,14 +1,14 @@
 export const dynamic = "force-dynamic"; // This disables SSG and ISR
 
-import crypto from "crypto";
+import crypto from "node:crypto";
 import prisma from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
 
-export default async function Post({ params }: { params: Promise<{ id: string }> }) {
+export default async function Post({ params }: Readonly<{ params: Promise<{ id: string }> }>) {
   const { id } = await params;
-  const postId = parseInt(id);
+  const postId = Number.parseInt(id);
 
   const post = await prisma.post.findUnique({
     where: { id: postId },
@@ -29,7 +29,7 @@ export default async function Post({ params }: { params: Promise<{ id: string }>
 
   const session = await getServerSession(authOptions);
   let deleteToken: string | null = null;
-  if (session && session.user && String(session.user.id) === String(post.authorId)) {
+  if (session?.user?.id && String(session.user.id) === String(post.authorId)) {
     const timestamp = Math.floor(Date.now() / 1000);
     const payload = `${postId}:${session.user.id}:${timestamp}`;
     const signature = crypto.createHmac("sha256", deleteTokenSecret).update(payload).digest("hex");
@@ -43,7 +43,7 @@ export default async function Post({ params }: { params: Promise<{ id: string }>
 
     // require session
     const srvSession = await getServerSession(authOptions);
-    if (!srvSession || !srvSession.user) {
+    if (!srvSession?.user) {
       console.log("Unauthorized: No session");
       throw new Error("Unauthorized");
     }
@@ -61,7 +61,20 @@ export default async function Post({ params }: { params: Promise<{ id: string }>
       console.log("Bad request: Missing token");
       throw new Error("Missing token");
     }
-    const rawToken = typeof tokenEntry === "string" ? tokenEntry : String(tokenEntry);
+
+    // Safely handle FormDataEntryValue (string | File/Blob).
+    let rawToken: string;
+
+    if (typeof tokenEntry === "string") {
+      rawToken = tokenEntry;
+    } else if (tokenEntry instanceof Blob) {
+      // File/Blob-like entry: read its text content
+      rawToken = await tokenEntry.text();
+    } else {
+      console.log("Bad request: Unsupported token entry type");
+      throw new Error("Malformed token");
+    }
+
 
     const parts = rawToken.split(":");
     if (parts.length !== 2) {
@@ -69,7 +82,7 @@ export default async function Post({ params }: { params: Promise<{ id: string }>
       throw new Error("Malformed token");
     }
     const [tsStr, sig] = parts;
-    const ts = parseInt(tsStr, 10);
+    const ts = Number.parseInt(tsStr, 10);
     if (Number.isNaN(ts) || !sig) {
       console.log("Bad request: Malformed token");
       throw new Error("Malformed token");
